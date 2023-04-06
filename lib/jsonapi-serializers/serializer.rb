@@ -217,7 +217,13 @@ module JSONAPI
         show_attr = true
         show_attr &&= send(if_method_name) if if_method_name
         show_attr &&= !send(unless_method_name) if unless_method_name
-        show_attr &&= @_fields[type.to_s].include?(formatted_attribute_name) if @_fields[type.to_s]
+        if @_fields[type.to_s]
+          show_attr &&= @_fields[type.to_s].include?(formatted_attribute_name)
+        else
+          # Ensure fields are only included if they are strictly defined
+          show_attr = false
+        end
+
         show_attr
       end
       protected :should_include_attr?
